@@ -12,7 +12,6 @@ media/
 
 # Virtual Environment
 venv/
-env/
 
 # VS Code
 .vscode/
