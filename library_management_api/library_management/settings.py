@@ -37,8 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'library',  # Add the library app 
-    'rest_framework',  # Add the Django REST framework
+    # External apps
+    'rest_framework', 
+    # Internal apps
+    'library',  
 ]
 
 MIDDLEWARE = [
@@ -75,25 +77,12 @@ WSGI_APPLICATION = 'library_management.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-from decouple import Config, Csv
-
-config = Config()
-
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME', default='library_db'),
-        'USER': config('DB_USER', default='user'),
-        'PASSWORD': config('DB_PASSWORD', default='password'),
-        'HOST': config('DB_HOST', default='db'),
-        'PORT': config('DB_PORT', default='5432'),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
-
-SECRET_KEY = config('SECRET_KEY', default='supersecretkey')
-
-DEBUG = config('DEBUG', default=True, cast=bool)
-
 
 
 # Password validation
