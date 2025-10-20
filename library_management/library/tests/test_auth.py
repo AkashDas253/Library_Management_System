@@ -5,13 +5,16 @@ from django.contrib.auth.models import User
 
 class AuthAPITestCase(APITestCase):
     def test_register(self):
+        from library.models import MembershipType
+        membership = MembershipType.objects.create(name='Gold', monthly_price=10.0, max_books=2)
         url = reverse('register')
         data = {
             'username': 'testuser',
             'password': 'testpass123',
             'email': 'test@example.com',
             'first_name': 'Test',
-            'last_name': 'User'
+            'last_name': 'User',
+            'membership_type_id': membership.id
         }
         response = self.client.post(url, data)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)

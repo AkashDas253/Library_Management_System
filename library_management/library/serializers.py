@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Book, Author, BorrowedBook, BookActivity, MembershipType, UserProfile
+from .models import Book, Author, BorrowedBook, BookActivity, MembershipType, UserProfile, Location
 from django.contrib.auth.models import User
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -20,10 +20,15 @@ class BorrowedBookSerializer(serializers.ModelSerializer):
         book = data.get('book')
         if book and book.available_copies is not None and book.available_copies < 1:
             raise serializers.ValidationError('No available copies for this book.')
+        # Ensure location is provided
+        if not data.get('location'):
+            raise serializers.ValidationError('Location is required for borrowing a book.')
         return data
     book = serializers.PrimaryKeyRelatedField(queryset=Book.objects.all())
     user_profile = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), required=False)
     transacted_by = serializers.PrimaryKeyRelatedField(queryset=UserProfile.objects.all(), required=False, allow_null=True)
+    location = serializers.PrimaryKeyRelatedField(queryset=Location.objects.all())
+    status = serializers.CharField()
 
     class Meta:
         model = BorrowedBook
@@ -31,12 +36,14 @@ class BorrowedBookSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
+    membership_type_id = serializers.PrimaryKeyRelatedField(queryset=MembershipType.objects.all(), write_only=True)
 
     class Meta:
         model = User
-        fields = ('username', 'password', 'email', 'first_name', 'last_name')
+        fields = ('username', 'password', 'email', 'first_name', 'last_name', 'membership_type_id')
 
     def create(self, validated_data):
+        membership_type = validated_data.pop('membership_type_id')
         user = User.objects.create_user(
             username=validated_data['username'],
             password=validated_data['password'],
@@ -44,6 +51,8 @@ class UserSerializer(serializers.ModelSerializer):
             first_name=validated_data.get('first_name', ''),
             last_name=validated_data.get('last_name', '')
         )
+        # Create UserProfile with membership_type
+        UserProfile.objects.create(user=user, role='member', membership_type=membership_type)
         return user
 
 class BookActivitySerializer(serializers.ModelSerializer):

@@ -8,10 +8,10 @@ from rest_framework.authtoken.models import Token
 class MembershipAPITestCase(APITestCase):
 
     def setUp(self):
-        self.member = User.objects.create_user(username='member', password='testpass123')
-        self.member_profile = UserProfile.objects.create(user=self.member, role='member')
-        self.token = Token.objects.create(user=self.member)
         self.membership_type = MembershipType.objects.create(name='Gold', monthly_price=10.0, max_books=5)
+        self.member = User.objects.create_user(username='member', password='testpass123')
+        self.member_profile = UserProfile.objects.create(user=self.member, role='member', membership_type=self.membership_type)
+        self.token = Token.objects.create(user=self.member)
 
 
     def test_view_membership(self):

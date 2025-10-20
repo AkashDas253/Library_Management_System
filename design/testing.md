@@ -1,4 +1,8 @@
+
 # Testing Guide
+
+## Summary
+- All business logic, including borrow/request/approval/location and membership/location enforcement, is covered by tests.
 
 This guide explains how to run and extend tests for the Library Management System.
 
@@ -17,13 +21,14 @@ This guide explains how to run and extend tests for the Library Management Syste
 
 ---
 
+
 ## Test Structure
 
 Tests are located in `library_management/library/tests/` and organized by feature:
 
 - `test_auth.py` — Registration and login
 - `test_book.py` — Book CRUD and permissions
-- `test_borrow.py` — Borrowing and returning books
+- `test_borrow.py` — Borrow/request/approval/return/location logic and membership/location enforcement
 - `test_activity.py` — Activity logging and access
 - `test_membership.py` — Membership view and update
 

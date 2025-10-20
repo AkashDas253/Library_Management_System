@@ -1,48 +1,41 @@
 # Library Management System
 
-## Overview
+A modular, testable Django backend for managing library books, users, memberships, borrow requests/approvals, and book locations.
 
-This project provides a robust backend for managing library operations, including books, users, borrowing, activities, and membership. It is designed for easy extension and adaptation to any institution's needs.
+## Features
+- Modular Django REST API
+- Membership-based borrow limits
+- Borrow request/approval flow (with location support)
+- Book location tracking
+- Comprehensive test suite
+- **Auto-accept for virtual books at virtual locations** (see below)
 
----
+## Core Concepts
+- **Membership Types:** Each user has a membership type that determines their borrow limit.
+- **Borrow/Request/Approval:** Members request books for a location; librarians approve/reject; status is tracked.
+- **Location:** Books and borrow requests are always tied to a specific location.
+- **Auto-Accept Virtual:** If `config.ini` has `auto_accept_virtual = true`, and both the book and the selected location are virtual, borrow requests are auto-accepted (status set to "accepted") as long as the user's borrow limit is not exceeded. For all other cases, requests remain pending until approved by a librarian. **You must restart the server after changing the config or code.**
 
-## Documentation Index
-
-All documentation is in the `design/` folder and organized by topic:
-
-### Project & Design
-- [Project Structure](design/project_structure.md)
-- [Schema (ERD)](design/schema.md)
-- [DFD](design/dfd.md)
-- [Sequence Diagrams](design/sequence_diagrams.md)
-
-### API & Usage
-- [API Endpoints](design/api_endpoints.md)
-
-### Setup & Customization
-- [Project Setup & Installation Guide](design/project_setup.md)
-
-### Testing & Development
-- [Testing Guide](design/testing.md)
-
----
-
-## Key Features
-- Modular API (auth, books, borrowing, activity, membership)
-- Role-based permissions (admin, librarian, member)
-- Token authentication (DRF)
-- Comprehensive test coverage
-- Designed for future config-file-based customization
-
----
+## User Roles & Permissions
+- **Admin:** Full access to all features and data.
+- **Librarian:** Manage books and approve/reject borrow requests at their location.
+- **Member:** Can request/return books, view activity, and manage their membership.
 
 ## Quick Start
+1. Clone the repo
+2. Install requirements: `pip install -r requirements.txt`
+3. Run migrations: `python manage.py migrate`
+4. Run tests: `python manage.py test`
+5. Start server: `python manage.py runserver`
 
-1. See [Project Setup & Installation Guide](design/project_setup.md) for environment and setup instructions.
-2. See [API Endpoints](design/api_endpoints.md) for a full list of available endpoints.
+## Documentation
+- **Project structure, models, and flows:** See [`design/project_structure.md`](design/project_structure.md)
+- **API endpoints:** See [`design/api_endpoints.md`](design/api_endpoints.md)
+- **Design docs:** All detailed docs are in the [`design/`](design/) folder
+- **Setup & environment:** See [`design/project_setup.md`](design/project_setup.md)
+
+## Test Coverage
+All business logic, permissions, and flows are covered by tests. See the `tests/` folder for details.
 
 ---
-
-<!--
-TODO: Add support for a single config file for full system customization.
--->
+For detailed onboarding, extension, or maintenance, always refer to the `design/` folder.

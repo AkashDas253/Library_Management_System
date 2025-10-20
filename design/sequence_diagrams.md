@@ -1,4 +1,39 @@
+
 # Library Management System – Sequence Diagrams
+
+## Summary
+- Modular Django REST API for library management
+- Membership-based borrow limits (enforced per user)
+- Borrow/request/approval flow: Members request books for a location, librarians approve/reject, status tracked
+- Book location tracking: Each book is assigned to a location; borrow/return is location-aware
+## 3. Borrow/Request/Approval (with Location)
+
+```mermaid
+sequenceDiagram
+    participant Member
+    participant Librarian
+    participant APIView
+    participant BookDB
+    participant LocationDB
+    participant BorrowDB
+    Member->>APIView: POST /api/borrowedbooks/borrow/ (book, location, due_date)
+    APIView->>BookDB: Check book availability at location
+    APIView->>BorrowDB: Create BorrowedBook (status=requested)
+    APIView-->>Member: Request submitted
+    Librarian->>APIView: POST /api/borrowedbooks/{id}/approve/ (at location)
+    APIView->>BorrowDB: Check request, membership, location
+    APIView->>BorrowDB: Update status to approved
+    APIView-->>Librarian: Approval success
+    Member->>APIView: POST /api/borrowedbooks/{id}/return/
+    APIView->>BorrowDB: Update status to returned
+    APIView-->>Member: Return success
+```
+
+---
+---
+- Borrow/request/approval flow: Members request books for a location, librarians at that location approve/reject, status tracked in BorrowedBook.
+- Membership enforcement: Members cannot exceed their borrow limit (active borrows only).
+- Location enforcement: Only librarians at the book's location can approve/reject requests.
 
 This document contains sequence diagrams for the main endpoints/processes identified from the DFD. Diagrams are written in Mermaid syntax for easy integration and visualization.
 

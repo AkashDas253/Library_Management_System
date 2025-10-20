@@ -1,6 +1,20 @@
 
+
 from django.db import models
 from django.contrib.auth.models import User
+
+# New Location model
+class Location(models.Model):
+    LOCATION_TYPE_CHOICES = [
+        ('physical', 'Physical'),
+        ('virtual', 'Virtual'),
+    ]
+    name = models.CharField(max_length=100)
+    location_type = models.CharField(max_length=10, choices=LOCATION_TYPE_CHOICES, default='physical')
+    address = models.CharField(max_length=255, blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.location_type})"
 
 class Author(models.Model):
     name = models.CharField(max_length=255)
@@ -21,6 +35,7 @@ BOOK_STATUS_CHOICES = [
     ('purchased', 'Purchased'),
 ]
 
+
 class Book(models.Model):
     title = models.CharField(max_length=255)
     author = models.ForeignKey(Author, related_name='books', on_delete=models.CASCADE)
@@ -29,6 +44,7 @@ class Book(models.Model):
     book_type = models.CharField(max_length=10, choices=BOOK_TYPE_CHOICES, default='physical')
     available_copies = models.PositiveIntegerField(null=True, blank=True)
     status = models.CharField(max_length=10, choices=BOOK_STATUS_CHOICES, default='available')
+    location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True, blank=True, related_name='books')
 
     def __str__(self):
         return self.title
@@ -62,16 +78,24 @@ class UserProfile(models.Model):
         return f"{self.user.username} ({self.role})"
 
 
+
 class BorrowedBook(models.Model):
+    STATUS_CHOICES = [
+        ('pending', 'Pending'),
+        ('accepted', 'Accepted'),
+        ('rejected', 'Rejected'),
+    ]
     book = models.ForeignKey(Book, related_name='borrowed_books', on_delete=models.CASCADE)
     user_profile = models.ForeignKey(UserProfile, related_name='borrowed_books', on_delete=models.CASCADE)
+    location = models.ForeignKey('Location', on_delete=models.SET_NULL, null=True, blank=True, related_name='borrow_requests')
     borrowed_date = models.DateField(auto_now_add=True)
     due_date = models.DateField()
     return_date = models.DateField(null=True, blank=True)
     transacted_by = models.ForeignKey(UserProfile, related_name='transactions', on_delete=models.SET_NULL, null=True, blank=True)
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
 
     def __str__(self):
-        return f"{self.book.title} borrowed by {self.user_profile.user.username}"
+        return f"{self.book.title} requested by {self.user_profile.user.username} at {self.location} [{self.status}]"
 
 class BookActivity(models.Model):
     ACTIVITY_CHOICES = [

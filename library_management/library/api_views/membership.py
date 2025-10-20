@@ -28,6 +28,10 @@ class MembershipViewSet(viewsets.ViewSet):
     def partial_update(self, request, pk=None):
         # Update own membership (membership_type)
         user_profile = UserProfile.objects.get(user=request.user)
+        # Check for active borrows
+        active_borrows = user_profile.borrowed_books.filter(status__in=['pending','accepted'], return_date__isnull=True).count()
+        if active_borrows > 0:
+            return Response({'error': 'Cannot change membership type with active borrows.'}, status=status.HTTP_403_FORBIDDEN)
         serializer = UserProfileMembershipSerializer(user_profile, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
