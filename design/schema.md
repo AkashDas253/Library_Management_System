@@ -20,6 +20,7 @@ erDiagram
     BOOK ||--o{ BOOKACTIVITY : has_activity
     BOOK }o--|| LOCATION : at
     BORROWEDBOOK }o--|| LOCATION : for
+
     BOOK {
         string title
         string book_type
@@ -27,17 +28,20 @@ erDiagram
         string status
         date published_date
         string isbn_number
-        locationId
+        string locationId
     }
+
     AUTHOR {
         string name
         string bio
     }
+
     USER {
         string username
         string password
         string email
     }
+
     USERPROFILE {
         string role
         string phone
@@ -47,11 +51,13 @@ erDiagram
         string region
         string membership_typeId
     }
+
     MEMBERSHIPTYPE {
         string name
         decimal monthly_price
         int max_books
     }
+
     BORROWEDBOOK {
         string bookId
         string user_profileId
@@ -61,10 +67,12 @@ erDiagram
         date due_date
         date return_date
     }
+
     LOCATION {
         string name
         string address
     }
+
     BOOKACTIVITY {
         string bookId
         string userId

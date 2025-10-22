@@ -27,7 +27,6 @@ graph LR
     Auth -- "Authenticated User" --> Librarian
     Auth -- "Authenticated User" --> Admin
 
-
     Member -- "Search/Add/Update Book" --> BookDB
     Librarian -- "Add/Update Book" --> BookDB
     Admin -- "Manage Books" --> BookDB
@@ -36,7 +35,6 @@ graph LR
     BookDB -- "Book Info" --> Admin
     BookDB -- "Location Info" --> LocationDB
     LocationDB -- "Location Info" --> BookDB
-
 
     Member -- "Request Borrow (with Location)" --> BorrowDB
     Librarian -- "Approve/Reject Borrow (at Location)" --> BorrowDB
@@ -55,9 +53,4 @@ graph LR
 
     Member -- "View/Update Membership" --> MembershipDB
     MembershipDB -- "Membership Info" --> Member
-
----
-- Borrow/request/approval flow: Members request books for a location, librarians at that location approve/reject, status tracked in BorrowedBook.
-- Membership enforcement: Members cannot exceed their borrow limit (active borrows only).
-- Location enforcement: Only librarians at the book's location can approve/reject requests.
 ```
