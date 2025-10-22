@@ -62,7 +62,7 @@ erDiagram
         string bookId
         string user_profileId
         string locationId
-        string status  %% requested/approved/rejected/returned
+        string status
         date borrowed_date
         date due_date
         date return_date
